@@ -1,11 +1,29 @@
-<mxfile host="app.diagrams.net" modified="2024-05-05T09:54:08.469Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="EvnaComFw82hHzvC1VQj" version="24.3.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-05-05T17:16:28.600Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="LBN_z00vVbYAKjoLtlnU" version="24.3.1" type="github">
   <diagram name="Page-1" id="mFCBEnTh9IBcUFOKiDiz">
-    <mxGraphModel dx="819" dy="430" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="797" dy="418" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="Z_MSqwI4jhc1PmDVcm2G-1" value="End User" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;" vertex="1" parent="1">
-          <mxGeometry x="410" y="360" width="30" height="60" as="geometry" />
+          <mxGeometry x="160" y="240" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Z_MSqwI4jhc1PmDVcm2G-2" value="&lt;p style=&quot;margin:0px;margin-top:4px;margin-left:10px;text-align:left;&quot;&gt;&lt;b&gt;bdd&lt;/b&gt; [package] Chessboard [Chessboard]&lt;br&gt;&lt;/p&gt;" style="html=1;shape=mxgraph.sysml.package;labelX=120;align=left;spacingLeft=10;overflow=fill;recursiveResize=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="390" width="390" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Z_MSqwI4jhc1PmDVcm2G-3" value="&lt;div&gt;&amp;lt;&amp;lt;block&amp;gt;&amp;gt;&lt;/div&gt;&lt;div&gt;Chessboard&lt;/div&gt;&lt;div&gt;&lt;hr&gt;parts&lt;/div&gt;&lt;div&gt;: Cell&lt;br&gt;&lt;/div&gt;" style="strokeColor=inherit;fillColor=inherit;gradientColor=inherit;shape=rect;fontStyle=1;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="Z_MSqwI4jhc1PmDVcm2G-2">
+          <mxGeometry x="15" y="30" width="105" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="Z_MSqwI4jhc1PmDVcm2G-4" value="&lt;div&gt;&amp;lt;&amp;lt;block&amp;gt;&amp;gt;&lt;/div&gt;&lt;div&gt;Cell&lt;br&gt;&lt;/div&gt;" style="strokeColor=inherit;fillColor=inherit;gradientColor=inherit;shape=rect;fontStyle=1;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="Z_MSqwI4jhc1PmDVcm2G-2">
+          <mxGeometry x="220" y="50" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Z_MSqwI4jhc1PmDVcm2G-5" value="" style="strokeColor=inherit;fillColor=inherit;gradientColor=inherit;align=right;html=1;verticalAlign=bottom;endArrow=none;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=none;endFill=0;labelBackgroundColor=none;rounded=0;" edge="1" parent="Z_MSqwI4jhc1PmDVcm2G-2" source="Z_MSqwI4jhc1PmDVcm2G-3" target="Z_MSqwI4jhc1PmDVcm2G-4">
+          <mxGeometry x="1" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Z_MSqwI4jhc1PmDVcm2G-6" value="1" style="resizable=0;html=1;align=left;verticalAlign=top;labelBackgroundColor=none;fontSize=10" connectable="0" vertex="1" parent="Z_MSqwI4jhc1PmDVcm2G-5">
+          <mxGeometry x="-1" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Z_MSqwI4jhc1PmDVcm2G-7" value="64" style="resizable=0;html=1;align=right;verticalAlign=top;labelBackgroundColor=none;fontSize=10" connectable="0" vertex="1" parent="Z_MSqwI4jhc1PmDVcm2G-5">
+          <mxGeometry x="1" relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
