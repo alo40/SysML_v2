@@ -1,0 +1,32 @@
+%viz
+%show
+
+--view=
+View candidates:    Default 
+                    Tree 
+                    State 
+                    Interconnection 
+                    Action 
+                    Sequence 
+                    Case 
+                    MIXED 
+
+--style=
+Possible styles:    SHOWINHERITED 
+                    COMPTREE   
+                    POLYLINE 
+                    HIDEMETADATA 
+                    LR 
+                    STDCOLOR 
+                    SHOWLIB 
+                    IMPLICITMULTIPLICITY 
+                    TB 
+                    SHOWIMPORTED 
+                    ORTHOLINE 
+                    EDGEMULTIPLICITY 
+                    COMPMOST 
+                    PLANTUML 
+                    SHOWMETACLASS 
+                    EVAL 
+                    DEFAULT 
+                    NODEMULTIPLICITY
