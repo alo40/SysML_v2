@@ -144,13 +144,9 @@ package Dont_Panic_Batmobile {
     use case def 'Activate rocket booster' {
         subject bm : Batmobile;
         actor driver : Batman;
-        objective {
-            doc /*
-                 * The driver wants to activate 
-                 * the rocket booster to increase 
-                 * the speed extremely.
-               */
-        }
+        doc /* The driver wants to activate 
+            * the rocket booster to increase 
+            * the speed extremely. */
     }
     action def ActivateRocketBooster :> 'Activate rocket booster' {
         first start;
@@ -176,12 +172,10 @@ package Dont_Panic_Batmobile {
     item def ProductManagement;
     
     requirement batmobileSpecification {    
-        requirement <'REQ42'> 
-            batmobileMaxSpeed : VehicleMaxSpeed {
+        requirement <'REQ42'> batmobileMaxSpeed : VehicleMaxSpeed {
                 attribute :>> maxSpeed = 230 [SI::'km/h'];
         }
-        requirement <'REQ43'> 
-            batmobileAcceleration;
+        requirement <'REQ43'> batmobileAcceleration;
     }
     
     #system batmobileDesignV23 : Batmobile;
