@@ -1,0 +1,9 @@
+python-statemachine
+pydot
+numpy
+matplotlib
+imageio
+pandas
+pandas-stubs
+ipython
+Pillow

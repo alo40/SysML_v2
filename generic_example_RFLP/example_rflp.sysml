@@ -25,6 +25,11 @@ package example_rflp {
             }
         }
 
+        requirement def 'RQ-01' {
+            doc
+            /* The fridge shall maintain an internal temperature between 1°C and 4°C (34°F and 39°F) for food preservation. */
+        }
+
         // requirement <'1.1'> MassRequirement{
         //     // doc /*The actual mass shall be less than the required mass*/
         //     // attribute massRequired:>ISQ::mass;
@@ -113,46 +118,69 @@ package example_rflp {
     }
     package Physical {
         part physical_system : Logical_System {
+            attribute mass = 139;
             // --- Interface Components ---
-            part volume_up_button : Interface;
-            part volume_down_button : Interface;
-            part mute_button : Interface;
-            part scroll_wheel_assy : Interface {
-                part wheel_body : Interface;
-                part wheel_axle : Interface;
-                part detent_spring : Interface;
+            part volume_up_button : Interface {
+                attribute mass = 2;
             }
-            part button_housing : Structural;
-            part front_cover : Structural;
+            part volume_down_button : Interface {
+                attribute mass = 2;
+            }
+            part mute_button : Interface {
+                attribute mass = 2;
+            }
+            part scroll_wheel_assy : Interface {
+                attribute mass = wheel_body.mass + wheel_axle.mass + detent_spring.mass;
+                part wheel_body : Interface {
+                    attribute mass = 11;
+                }
+                part wheel_axle : Interface {
+                    attribute mass = 1;
+                }
+                part detent_spring : Interface {
+                    attribute mass = 1;
+                }
+            }
+            part button_housing : Structural {
+                attribute mass = 15;
+            }
+            part front_cover : Structural {
+                attribute mass = 25;
+            }
             part pcba : Structural {
+                attribute mass = 81; // 30g for bare board + 51g for components
                 // --- Interface Components ---
-                part rotary_encoder : Interface;
-                part status_led_green : Interface;
-                part error_led_red : Interface;
-                part haptic_feedback_motor : Interface;
-                part button_backlight : Interface;
+                part rotary_encoder : Interface { attribute mass = 5; }
+                part status_led_green : Interface { attribute mass = 1; }
+                part error_led_red : Interface { attribute mass = 1; }
+                part haptic_feedback_motor : Interface { attribute mass = 8; }
+                part button_backlight : Interface { attribute mass = 2; }
 
                 // --- Processing Components ---
                 part microcontroller : Processing {
+                    attribute memory_flash : Real = 256*1024 [byte];
+                    attribute memory_ram : Real = 32*1024 [byte];
+                    attribute mass = 10;
+                    //
                     part electronics : Processing;
                     part software_stack : Processing;
                 }
-                part external_eeprom : Processing;
-                part main_oscillator : Processing;
-                part jtag_debug_header : Processing;
+                part external_eeprom : Processing { attribute mass = 2; }
+                part main_oscillator : Processing { attribute mass = 2; }
+                part jtag_debug_header : Processing { attribute mass = 3; }
                 
                 // --- Communication Components ---
-                part can_transceiver : Communication;
-                part can_bus_connector : Communication;
-                part can_termination_resistor_1 : Communication;
-                part can_termination_resistor_2 : Communication;
+                part can_transceiver : Communication { attribute mass = 2; }
+                part can_bus_connector : Communication { attribute mass = 5; }
+                part can_termination_resistor_1 : Communication { attribute mass = 1; }
+                part can_termination_resistor_2 : Communication { attribute mass = 1; }
                 
                 // --- Power Components ---
-                part main_power_regulator : Power;
-                part input_filter_capacitor : Power;
-                part output_smoothing_capacitor : Power;
-                part main_fuse : Power;
-                part reverse_protection_diode : Power;
+                part main_power_regulator : Power { attribute mass = 4; }
+                part input_filter_capacitor : Power { attribute mass = 1; }
+                part output_smoothing_capacitor : Power { attribute mass = 1; }
+                part main_fuse : Power { attribute mass = 1; }
+                part reverse_protection_diode : Power { attribute mass = 1; }
             }
         }
     }
