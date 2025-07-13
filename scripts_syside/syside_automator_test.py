@@ -6,7 +6,7 @@ import syside
 
 # load model
 # model, diagnostics = syside.load_model(["generic_example_RFLP/example_rflp.sysml"])
-model, diagnostics = syside.load_model(["project_VehicleModel_AnnexB/vehicleModel_StepByStep.sysml"])
+model, diagnostics = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/project_VehicleModel_AnnexB/vehicleModel_StepByStep.sysml"])
 
 # # print all elements
 # for element in model.elements(syside.PartUsage):

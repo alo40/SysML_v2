@@ -3,7 +3,7 @@ package VehicleModel {
     package Definitions {
         package PartDefinitions {
             abstract part def Physical {
-                attribute mass default 0;
+                attribute mass default 1;
             }
             part def Vehicle :> Physical {
                 attribute dryMass;
@@ -103,47 +103,47 @@ package VehicleModel {
             package States;
             package Requirements;
         }
-    //     package VehicleConfiguration_b {
-    //         package PartsTree {
-    //             part vehicle_b : Vehicle {
-    //                 part fuelTank : FuelTank;
-    //                 part frontAxleAssembly : AxleAssembly {
-    //                     part frontAxle : Axle;
-    //                     part frontWheels : Wheel;
-    //                 }
-    //                 part rearAxleAssembly : AxleAssembly {
-    //                     part rearWheel1 : Wheel;
-    //                     part rearWheel2 : Wheel;
-    //                     part differential;
-    //                     part rearAxle : Axle {
-    //                         part leftHalfAxle;
-    //                         part rightHalfAxle;
-    //                     }
-    //                 }
-    //                 part engine : Engine {
-    //                     part cylinders;
-    //                 }
-    //                 part transmission : Transmission;
-    //                 part driveshaft : Driveshaft;
-    //                 part vehicleSoftware {
-    //                     part vehicleController;
-    //                 }
-    //             }
-    //         }
-    //         package ActionTree {
-    //             action providePower {
-    //                 action generateTorque;
-    //                 action amplifyTorque;
-    //                 action transferTorque;
-    //                 action distributeTorque;
-    //             }
-    //             action performSelfTest;
-    //             action applyParkingBrake;
-    //             action senseTemperature;
-    //         }
-    //         package States;
-    //         package Requirements;   
-    //     }
+        package VehicleConfiguration_b {
+            package PartsTree {
+                part vehicle_b : Vehicle {
+                    part fuelTank : FuelTank;
+                    part frontAxleAssembly : AxleAssembly {
+                        part frontAxle : Axle;
+                        part frontWheels : Wheel;
+                    }
+                    part rearAxleAssembly : AxleAssembly {
+                        part rearWheel1 : Wheel;
+                        part rearWheel2 : Wheel;
+                        part differential;
+                        part rearAxle : Axle {
+                            part leftHalfAxle;
+                            part rightHalfAxle;
+                        }
+                    }
+                    part engine : Engine {
+                        part cylinders;
+                    }
+                    part transmission : Transmission;
+                    part driveshaft : Driveshaft;
+                    part vehicleSoftware {
+                        part vehicleController;
+                    }
+                }
+            }
+            package ActionTree {
+                action providePower {
+                    action generateTorque;
+                    action amplifyTorque;
+                    action transferTorque;
+                    action distributeTorque;
+                }
+                action performSelfTest;
+                action applyParkingBrake;
+                action senseTemperature;
+            }
+            package States;
+            package Requirements;   
+        }
     }
     package VehicleAnalysis;
     package FuelEconomyAnalysisModel;
