@@ -3,8 +3,9 @@
 import syside
 
 # Load the model - this is the first step for any SysIDE Automator script
-model, diagnostics = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/syside_firstExample/example_model.sysml"])
-# model, diagnostics = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/generic_electronics/pcba_simulation.sysml"])
+# model, diagnostics = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/syside_firstExample/example_model.sysml"])
+model, diagnostics = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/generic_electronics/pcba_simulation.sysml"])
+# model, diagnostic = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/syside_jsonExport/json_export_model.sysml"])
 
 def walk_ownership_tree(element: syside.Element, level: int = 0) -> None:
     """Recursively print all elements in the model."""
