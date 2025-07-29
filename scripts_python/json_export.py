@@ -6,13 +6,13 @@ import codecs
 
 EXAMPLE_DIR = pathlib.Path(__file__).parent.parent
 
-# syside example
-MODEL_DIR_PATH = EXAMPLE_DIR / "syside_jsonExport"
-MODEL_FILE_PATH = MODEL_DIR_PATH / "json_export_model.sysml"
+# # syside example
+# MODEL_DIR_PATH = EXAMPLE_DIR / "syside_jsonExport"
+# MODEL_FILE_PATH = MODEL_DIR_PATH / "json_export_model.sysml"
 
-# # electronics model
-# MODEL_DIR_PATH = EXAMPLE_DIR / "generic_electronics"
-# MODEL_FILE_PATH = MODEL_DIR_PATH / "pcba_simulation.sysml"
+# electronics model
+MODEL_DIR_PATH = EXAMPLE_DIR / "generic_electronics"
+MODEL_FILE_PATH = MODEL_DIR_PATH / "pcba_simulation.sysml"
 
 
 def main() -> None:
