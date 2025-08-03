@@ -9,8 +9,8 @@ package Electronics {
             attribute resistance :> ISQ::resistance;
         }
         part def CircuitBoard :> Component {
-            power :>> a;
-            ground :>> b;
+            port power :>> a;
+            port ground :>> b;
         }
         part def Microswitch :> Component {
             attribute operatingForce :> ISQ::force;
@@ -18,12 +18,12 @@ package Electronics {
         }
         part def LED :> Component {
             attribute color : ScalarValues::String;
-            cathode :>> a;
-            anode :>> b;
+            port cathode :>> a;
+            port anode :>> b;
         }
         part def Microcontroller :> Component {
-            power :>> a;
-            ground :>> b;
+            port power :>> a;
+            port ground :>> b;
             port gpio_1;
             port gpio_2;
             port gpio_3;
@@ -56,7 +56,7 @@ package Electronics {
                 part led2 : LED;
                 part mcu : Microcontroller;
                 // power interfaces
-                interface i01 connect mcu.power to box.pcb.ground;
+                interface i01 connect mcu.power to box.pcb.power;
                 interface i02 connect mcu.ground to box.pcb.ground;
                 // switch interfaces
                 interface i03 connect mcu.gpio_1 to s1.a;

@@ -1,5 +1,5 @@
-# import syside_license
-# syside_license.check()  # Validates your license
+import syside_license
+syside_license.check()  # Validates your license
 import syside
 
 # Load the model - this is the first step for any SysIDE Automator script
