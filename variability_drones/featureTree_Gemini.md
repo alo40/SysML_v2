@@ -1,66 +1,42 @@
 ::: mermaid
-classDiagram
-%% Packages
-class Variability
-class DroneProductLine
-class DeliveryDroneSystemX42Model
-Variability --> DroneProductLine
-Variability --> DeliveryDroneSystemX42Model
+%%{init: { 'flowchart': { 'defaultRenderer': 'elk', 'elk': { 'edgeRouting': 'ORTHOGONAL' } } } }%%
+flowchart TD
+    %% Root Feature
+    subgraph "Feature Model"
+        Drone([Drone])
 
-%% Battery hierarchy
-class Battery
-class StandardBattery
-class PowerBattery
-Battery <|-- StandardBattery
-Battery <|-- PowerBattery
-DroneProductLine --> Battery
+        %% Main Feature Categories
+        Drone --> Battery
+        Drone --> Engines
+        Drone --> Camera
 
-%% Camera hierarchy
-class Camera
-class StandardCamera
-class HighResCamera
-class ThermalCamera
-Camera <|-- StandardCamera
-Camera <|-- HighResCamera
-Camera <|-- ThermalCamera
-DroneProductLine --> Camera
+        %% Battery Options
+        Battery --> StandardBattery[Standard Battery]
+        Battery --> PowerBattery[Power Battery]
 
-%% Drone and DroneSystem
-class DroneSystem {
-  +drones[*]: Drone
-}
-class Drone {
-  +battery: Battery (variation)
-  +engines[4..8] (variation)
-  +camera: Camera (variation)
-}
-DroneSystem --> "drones[*]" Drone
-Drone --> Battery
-Drone --> Camera
+        %% Engine Options
+        Engines --> FourEngines[4 Engines]
+        Engines --> SixEngines[6 Engines]
+        Engines --> EightEngines[8 Engines]
 
-%% Engine Variants
-class fourEngines {
-  +[4]
-}
-class sixEngines {
-  +[6]
-}
-class eightEngines {
-  +[8]
-}
-Drone --> fourEngines
-Drone --> sixEngines
-Drone --> eightEngines
+        %% Camera Options
+        Camera --> StandardCamera[Standard Camera]
+        Camera --> HighResCamera[High-Res Camera]
+        Camera --> ThermalCamera[Thermal Camera]
+    end
 
-%% DeliveryDroneSystemX42Model
-class DeliveryDroneSystemX42 {
-  +drones[*]:
-  +battery = powerBattery
-  +camera = standard_camera
-  +engines = sixEngines
-}
-DeliveryDroneSystemX42 --|> DroneSystem
+    %% Specific Configuration
+    subgraph "Product Configuration"
+        DeliveryDrone("DeliveryDroneSystem X42")
+        SurveillanceDrone("SurveillanceDroneSystem S88")
+    end
 
-%% Imports
-DeliveryDroneSystemX42Model ..> DroneProductLine : private import
+    %% Connect configuration to selected features
+    DeliveryDrone --> SixEngines
+    DeliveryDrone --> PowerBattery
+    DeliveryDrone --> StandardCamera
+
+    SurveillanceDrone --> EightEngines
+    SurveillanceDrone --> PowerBattery
+    SurveillanceDrone --> HighResCamera
 :::

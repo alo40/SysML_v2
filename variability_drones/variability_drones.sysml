@@ -39,5 +39,12 @@ package Variability {
                 part :>> camera = camera::standard_camera;
             }
         }
+        part def 'SurveillanceDroneSystem S88' :> DroneSystem {
+            part :>> drones[*] {
+                part :>> engines = engines::eightEngines;
+                part :>> battery = battery::powerBattery;
+                part :>> camera = camera::high_res_camera;
+            }
+        }
     }
 }
