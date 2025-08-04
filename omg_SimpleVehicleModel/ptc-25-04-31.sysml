@@ -1,4 +1,4 @@
-package SimpleVehicleModel{
+package OMG_SimpleVehicleModel{
     // 2023-02 release
     public import Definitions::*;  
     public import ISQ::*;
@@ -482,7 +482,6 @@ package SimpleVehicleModel{
             }
         }
     }
-
     package VehicleLogicalConfiguration{
         package PartsTree{
             #logical part vehicleLogical:Vehicle{
@@ -648,7 +647,7 @@ package SimpleVehicleModel{
                         part cylinders:Cylinder[4..6];
                         part alternator{
                             action generateElectricity;
-                        }
+                        }`
                         satisfy Requirements::engineSpecification by vehicle_b.engine{
                             requirement torqueGenerationRequirement :>> torqueGenerationRequirement{
                                 subject generateTorque redefines generateTorque = vehicle_b.engine.generateTorque;
@@ -1496,7 +1495,7 @@ package SimpleVehicleModel{
                         part cylinder:Cylinder [6]{
                             variation attribute diameter:LengthValue{
                                 variant attribute smallDiameter:LengthValue;
-                                variant attribute largeDiagmeter:LengthValue;
+                                variant attribute largeDiameter:LengthValue;
                             }
                         }
                     }
@@ -1577,4 +1576,3 @@ package SimpleVehicleModel{
         }
     }
 }
-
