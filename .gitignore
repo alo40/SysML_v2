@@ -1,4 +1,15 @@
+*.venv
 *.log
 *.env
 *.DS_Store
+*.pyi
+*.ipynb
 *.json
+*.bat
+*.fish
+*.nu
+*.csh
+*.ps1
+*.TAG
+*.cfg
+*.DS_Store
