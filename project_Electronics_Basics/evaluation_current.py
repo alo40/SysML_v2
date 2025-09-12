@@ -16,6 +16,7 @@ for attr_element in model.nodes(syside.AttributeUsage):
     expression = attr_element.feature_value_expression
     result = syside.Compiler().evaluate(expression)[0]
     print(f"{attr_element.owner.name} {attr_element.name} = {result}")
+print("\nDone")
 
     # if attr_element.name == "mass":
     #     expression = attr_element.feature_value_expression
