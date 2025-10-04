@@ -25,10 +25,10 @@ package example_rflp {
             }
         }
 
-        requirement def 'RQ-01' {
-            doc
-            /* The fridge shall maintain an internal temperature between 1°C and 4°C (34°F and 39°F) for food preservation. */
-        }
+        // requirement def 'RQ-01' {
+        //     doc
+        //     /* The fridge shall maintain an internal temperature between 1°C and 4°C (34°F and 39°F) for food preservation. */
+        // }
 
         // requirement <'1.1'> MassRequirement{
         //     // doc /*The actual mass shall be less than the required mass*/

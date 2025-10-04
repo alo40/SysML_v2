@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SysMLv2 JSON — Knowledge Graph</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html,body{height:100%;margin:0;font-family:system-ui,Arial,Helvetica,sans-serif}
+    #app{display:flex;height:100vh;gap:0}
+    #cy{flex:1;position:relative}
+    #panel{width:320px;border-left:1px solid #e6e6e6;background:#fbfdff;padding:12px;box-sizing:border-box;overflow:auto}
+    h2{margin:4px 0 8px 0;font-size:16px}
+    .meta{font-size:13px;color:#334155;margin-bottom:8px}
+    .k{color:#0f172a;font-weight:600}
+    .v{color:#0f172a}
+    .chip{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;margin-right:6px;font-size:12px}
+    #controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    button,select{padding:8px;border-radius:8px;border:1px solid #d0d7de;background:white;cursor:pointer}
+    #legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+    .legend-item{display:flex;gap:8px;align-items:center;font-size:12px}
+    .sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+    .small{font-size:12px;color:#667085}
+    pre{background:#0f172a;color:#e6eef8;padding:8px;border-radius:6px;overflow:auto;font-size:12px}
+  </style>
+  <!-- Cytoscape core -->
+  <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div id="cy"></div>
+    <div id="panel">
+      <h2>SysMLv2 Knowledge Graph</h2>
+
+      <div id="controls">
+        <select id="layoutSelect" title="Choose layout">
+          <option value="cose">cose (default)</option>
+          <option value="grid">grid</option>
+          <option value="circle">circle</option>
+        </select>
+        <button id="exportPng">Export PNG</button>
+        <button id="downloadJson">Download JSON</button>
+      </div>
+
+      <div class="meta small">Click a node to see details below. Use the layout selector to rearrange.</div>
+
+      <div id="details">
+        <div class="meta">No node selected.</div>
+      </div>
+
+      <h3 class="small" style="margin-top:12px">Legend</h3>
+      <div id="legend"></div>
+
+      <h3 class="small" style="margin-top:14px">Raw JSON (trimmed)</h3>
+      <pre id="rawjson"></pre>
+    </div>
+  </div>
+
+  <script>
+/* ============================
+   Embedded SysMLv2 JSON export
+   (This is your uploaded file content)
+   ============================ */
+const sysmlJson = [
+    {
+        "@type": "Namespace",
+        "@id": "3555361c-93b4-4136-a5ce-b318ba83f1ee",
+        "elementId": "3555361c-93b4-4136-a5ce-b318ba83f1ee",
+        "ownedRelationship": [
+            {
+                "@id": "164fb5ea-7f2a-45cc-896f-d1e565f2c4ef"
+            }
+        ]
+    },
+    {
+        "@type": "OwningMembership",
+        "@id": "164fb5ea-7f2a-45cc-896f-d1e565f2c4ef",
+        "elementId": "164fb5ea-7f2a-45cc-896f-d1e565f2c4ef",
+        "owningRelatedElement": {
+            "@id": "3555361c-93b4-4136-a5ce-b318ba83f1ee"
+        },
+        "memberElement": {
+            "@id": "9b586d6f-8b40-485d-b92e-0c12f9e12aba"
+        },
+        "memberName": "JSON Export Example",
+        "ownedRelatedElement": [
+            {
+                "@id": "9b586d6f-8b40-485d-b92e-0c12f9e12aba"
+            }
+        ]
+    },
+    {
+        "@type": "Package",
+        "@id": "9b586d6f-8b40-485d-b92e-0c12f9e12aba",
+        "elementId": "9b586d6f-8b40-485d-b92e-0c12f9e12aba",
+        "declaredName": "JSON Export Example",
+        "owningRelationship": {
+            "@id": "164fb5ea-7f2a-45cc-896f-d1e565f2c4ef"
+        },
+        "ownedRelationship": [
+            {
+                "@id": "b7368510-b7fa-4cf8-b23c-61e699876efc"
+            },
+            {
+                "@id": "3777b43a-39ee-4aff-a158-e0ee838d75dd"
+            },
+            {
+                "@id": "0def2736-ac19-4215-af90-18a6c608ffe1"
+            }
+        ]
+    },
+    {
+        "@type": "OwningMembership",
+        "@id": "b7368510-b7fa-4cf8-b23c-61e699876efc",
+        "elementId": "b7368510-b7fa-4cf8-b23c-61e699876efc",
+        "owningRelatedElement": {
+            "@id": "9b586d6f-8b40-485d-b92e-0c12f9e12aba"
+        },
+        "memberElement": {
+            "@id": "daef4822-baa4-470c-af68-5d2549636895"
+        },
+        "memberName": "Electrical",
+        "ownedRelatedElement": [
+            {
+                "@id": "daef4822-baa4-470c-af68-5d2549636895"
+            }
+        ]
+    },
+    {
+        "@type": "PartDefinition",
+        "@id": "daef4822-baa4-470c-af68-5d2549636895",
+        "elementId": "daef4822-baa4-470c-af68-5d2549636895",
+        "declaredName": "Electrical",
+        "owningRelationship": {
+            "@id": "b7368510-b7fa-4cf8-b23c-61e699876efc"
+        },
+        "isVariation": false
+    },
+    {
+        "@type": "OwningMembership",
+        "@id": "3777b43a-39ee-4aff-a158-e0ee838d75dd",
+        "elementId": "3777b43a-39ee-4aff-a158-e0ee838d75dd",
+        "owningRelatedElement": {
+            "@id": "9b586d6f-8b40-485d-b92e-0c12f9e12aba"
+        },
+        "memberElement": {
+            "@id": "8feced18-2008-4aad-9e00-685217449f18"
+        },
+        "memberName": "Mechanical",
+        "ownedRelatedElement": [
+            {
+                "@id": "8feced18-2008-4aad-9e00-685217449f18"
+            }
+        ]
+    },
+    {
+        "@type": "PartDefinition",
+        "@id": "8feced18-2008-4aad-9e00-685217449f18",
+        "elementId": "8feced18-2008-4aad-9e00-685217449f18",
+        "declaredName": "Mechanical",
+        "owningRelationship": {
+            "@id": "3777b43a-39ee-4aff-a158-e0ee838d75dd"
+        },
+        "isVariation": false
+    },
+    {
+        "@type": "OwningMembership",
+        "@id": "0def2736-ac19-4215-af90-18a6c608ffe1",
+        "elementId": "0def2736-ac19-4215-af90-18a6c608ffe1",
+        "owningRelatedElement": {
+            "@id": "9b586d6f-8b40-485d-b92e-0c12f9e12aba"
+        },
+        "memberElement": {
+            "@id": "b732f690-48b8-468c-b3f8-7342384641c4"
+        },
+        "memberName": "Automobile",
+        "ownedRelatedElement": [
+            {
+                "@id": "b732f690-48b8-468c-b3f8-7342384641c4"
+            }
+        ]
+    },
+    {
+        "@type": "PartUsage",
+        "@id": "b732f690-48b8-468c-b3f8-7342384641c4",
+        "elementId": "b732f690-48b8-468c-b3f8-7342384641c4",
+        "declaredName": "Automobile",
+        "owningRelationship": {
+            "@id": "0def2736-ac19-4215-af90-18a6c608ffe1"
+        },
+        "isVariation": false,
+        "ownedRelationship": [
+            {
+                "@id": "ab748c3f-5561-4b9b-a388-f0b1af31789d"
+            },
+            {
+                "@id": "66778776-817b-4b01-ab4b-441d8befd5df"
+            }
+        ]
+    },
+    {
+        "@type": "FeatureMembership",
+        "@id": "ab748c3f-5561-4b9b-a388-f0b1af31789d",
+        "elementId": "ab748c3f-5561-4b9b-a388-f0b1af31789d",
+        "owningRelatedElement": {
+            "@id": "b732f690-48b8-468c-b3f8-7342384641c4"
+        },
+        "memberElement": {
+            "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593"
+        },
+        "memberName": "Drive Train",
+        "feature": {
+            "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593"
+        },
+        "type": {
+            "@id": "b732f690-48b8-468c-b3f8-7342384641c4"
+        },
+        "ownedRelatedElement": [
+            {
+                "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593"
+            }
+        ]
+    },
+    {
+        "@type": "PartUsage",
+        "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593",
+        "elementId": "014bbe11-1ab2-4b70-8134-87ca35f74593",
+        "declaredName": "Drive Train",
+        "owningRelationship": {
+            "@id": "ab748c3f-5561-4b9b-a388-f0b1af31789d"
+        },
+        "isComposite": true,
+        "isVariation": false,
+        "ownedRelationship": [
+            {
+                "@id": "2863bceb-72ce-496b-ab4e-84d09b26102f"
+            }
+        ]
+    },
+    {
+        "@type": "FeatureTyping",
+        "@id": "2863bceb-72ce-496b-ab4e-84d09b26102f",
+        "elementId": "2863bceb-72ce-496b-ab4e-84d09b26102f",
+        "owningRelatedElement": {
+            "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593"
+        },
+        "general": {
+            "@id": "daef4822-baa4-470c-af68-5d2549636895"
+        },
+        "specific": {
+            "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593"
+        },
+        "type": {
+            "@id": "daef4822-baa4-470c-af68-5d2549636895"
+        },
+        "typedFeature": {
+            "@id": "014bbe11-1ab2-4b70-8134-87ca35f74593"
+        }
+    },
+    {
+        "@type": "FeatureMembership",
+        "@id": "66778776-817b-4b01-ab4b-441d8befd5df",
+        "elementId": "66778776-817b-4b01-ab4b-441d8befd5df",
+        "owningRelatedElement": {
+            "@id": "b732f690-48b8-468c-b3f8-7342384641c4"
+        },
+        "memberElement": {
+            "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887"
+        },
+        "memberName": "Chassis",
+        "feature": {
+            "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887"
+        },
+        "type": {
+            "@id": "b732f690-48b8-468c-b3f8-7342384641c4"
+        },
+        "ownedRelatedElement": [
+            {
+                "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887"
+            }
+        ]
+    },
+    {
+        "@type": "PartUsage",
+        "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887",
+        "elementId": "b19e14d8-ad54-40e6-bf27-43795f83d887",
+        "declaredName": "Chassis",
+        "owningRelationship": {
+            "@id": "66778776-817b-4b01-ab4b-441d8befd5df"
+        },
+        "isComposite": true,
+        "isVariation": false,
+        "ownedRelationship": [
+            {
+                "@id": "a7cbac62-0970-45b2-b047-d77ffea7cc58"
+            }
+        ]
+    },
+    {
+        "@type": "FeatureTyping",
+        "@id": "a7cbac62-0970-45b2-b047-d77ffea7cc58",
+        "elementId": "a7cbac62-0970-45b2-b047-d77ffea7cc58",
+        "owningRelatedElement": {
+            "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887"
+        },
+        "general": {
+            "@id": "8feced18-2008-4aad-9e00-685217449f18"
+        },
+        "specific": {
+            "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887"
+        },
+        "type": {
+            "@id": "8feced18-2008-4aad-9e00-685217449f18"
+        },
+        "typedFeature": {
+            "@id": "b19e14d8-ad54-40e6-bf27-43795f83d887"
+        }
+    }
+];
+
+/* ============================
+   Helper: safe getter for @id references
+   ============================ */
+function idOf(ref){
+  if(!ref) return null;
+  if(typeof ref === 'string') return ref;
+  if(ref['@id']) return ref['@id'];
+  return null;
+}
+
+/* ============================
+   Build nodes + edges for Cytoscape
+   - Use element @id as node id
+   - Use declaredName / memberName / @type as label
+   - Create edges for common SysML relationships:
+     * owningRelatedElement (owner -> element)  [label: owns]
+     * ownedRelatedElement (element -> child)   [label: owns]
+     * memberElement (element -> member)        [label: member]
+     * owningRelationship -> ownedRelationship refs (if present)
+     * general -> specific                      [label: types]
+   ============================ */
+const nodeMap = new Map();
+const edges = [];
+
+function addNode(el){
+  const id = el['@id'];
+  if(nodeMap.has(id)) return;
+  const label = el.declaredName || el.memberName || el.elementId || el['@type'] || id;
+  nodeMap.set(id, {
+    data: {
+      id: id,
+      label: String(label),
+      type: el['@type'] || 'Element',
+      raw: el
+    }
+  });
+}
+
+for(const el of sysmlJson){
+  addNode(el);
+}
+
+// second pass: create edges by looking at relationships
+sysmlJson.forEach((el, idx)=>{
+  const srcId = el['@id'];
+  // owningRelatedElement => likely the owner reference (owner -> this element)
+  if(el.owningRelatedElement){
+    const ownerId = idOf(el.owningRelatedElement);
+    if(ownerId){
+      addNode({["@id"]: ownerId});
+      edges.push({ data: { id: 'e_owner_' + srcId, source: ownerId, target: srcId, label: 'owns' }});
+    }
+  }
+  // ownedRelatedElement => this element owns these children
+  if(Array.isArray(el.ownedRelatedElement)){
+    el.ownedRelatedElement.forEach((r,i)=>{
+      const cid = idOf(r);
+      if(cid){
+        addNode({["@id"]: cid});
+        edges.push({ data: { id: 'e_owned_' + srcId + '_' + i, source: srcId, target: cid, label: 'owns' }});
+      }
+    });
+  }
+  // memberElement => a membership link (this -> member)
+  if(el.memberElement){
+    const mid = idOf(el.memberElement);
+    if(mid){
+      addNode({["@id"]: mid});
+      edges.push({ data: { id: 'e_member_' + srcId, source: srcId, target: mid, label: 'member' }});
+    }
+  }
+  // ownedRelationship (array of relationship refs) -> create simple link to referenced relationships
+  if(Array.isArray(el.ownedRelationship)){
+    el.ownedRelationship.forEach((r,i)=>{
+      const rid = idOf(r);
+      if(rid){
+        addNode({["@id"]: rid});
+        edges.push({ data: { id: 'e_orel_' + srcId + '_' + i, source: srcId, target: rid, label: 'ownsRel' }});
+      }
+    });
+  }
+  // relationships specific to typing: general -> specific
+  if(el.general && el.specific){
+    const g = idOf(el.general), s = idOf(el.specific);
+    if(g && s){
+      addNode({["@id"]: g});
+      addNode({["@id"]: s});
+      edges.push({ data: { id: 'e_types_' + srcId, source: g, target: s, label: 'types' }});
+    }
+  }
+  // FeatureMemberships often tie owningRelatedElement -> memberElement and feature/type info
+  // (above memberElement and owningRelatedElement already capture those)
+});
+
+/* ============================
+   Prepare arrays for cytoscape
+   ============================ */
+const nodes = Array.from(nodeMap.values());
+const elements = nodes.concat(edges);
+
+/* ============================
+   Create Cytoscape
+   ============================ */
+const cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements: elements,
+  style: [
+    {
+      selector: 'node',
+      style: {
+        'background-color': function(ele){ 
+          const t = ele.data('type') || '';
+          // type-based color heuristics
+          if(t.toLowerCase().includes('partdefinition')) return '#7c3aed';
+          if(t.toLowerCase().includes('partusage')) return '#06b6d4';
+          if(t.toLowerCase().includes('package')) return '#f97316';
+          if(t.toLowerCase().includes('feature')) return '#10b981';
+          if(t.toLowerCase().includes('membership')) return '#94a3b8';
+          if(t.toLowerCase().includes('featuretyping')) return '#a78bfa';
+          return '#60a5fa';
+        },
+        'label': 'data(label)',
+        'text-valign': 'center',
+        'text-halign': 'center',
+        'color': '#fff',
+        'text-outline-width': 2,
+        'text-outline-color': '#222',
+        'font-size': 10,
+        'width': 'label', 
+        'height': 'label',
+        'padding': '8px'
+      }
+    },
+    {
+      selector: 'edge',
+      style: {
+        'curve-style': 'bezier',
+        'target-arrow-shape': 'triangle',
+        'target-arrow-color': '#7f8c8d',
+        'line-color': '#7f8c8d',
+        'width': 2,
+        'label': 'data(label)',
+        'font-size': 9,
+        'text-rotation': 'autorotate',
+        'text-margin-y': -6
+      }
+    },
+    { selector: ':selected', style: { 'border-width': 3, 'border-color': '#111' } }
+  ],
+  layout: { name: 'cose', animate: true, fit: true, padding: 20 }
+});
+
+/* ============================
+   Sidebar: show node details on click
+   ============================ */
+const details = document.getElementById('details');
+
+function renderDetails(nodeData){
+  const d = nodeData.raw || {};
+  const rows = [];
+  rows.push(`<div class="k">${escapeHtml(nodeData.label)}</div>`);
+  rows.push(`<div class="small">Type: <span class="v">${escapeHtml(nodeData.type)}</span></div>`);
+  // show a few common properties if present
+  const props = ['declaredName','memberName','elementId','isComposite','isVariation','isVariation','isComposite'];
+  props.forEach(p=>{
+    if(d[p] !== undefined) rows.push(`<div class="meta"><span class="k">${p}:</span> <span class="v">${escapeHtml(String(d[p]))}</span></div>`);
+  });
+  // list references (owningRelatedElement, memberElement, ownedRelatedElement, general, specific)
+  const refs = {};
+  if(d.owningRelatedElement) refs.owningRelatedElement = d.owningRelatedElement['@id'] || d.owningRelatedElement;
+  if(d.memberElement) refs.memberElement = d.memberElement['@id'] || d.memberElement;
+  if(d.ownedRelatedElement) refs.ownedRelatedElement = (Array.isArray(d.ownedRelatedElement) ? d.ownedRelatedElement.map(x => x['@id']||x).join(', ') : (d.ownedRelatedElement['@id']||d.ownedRelatedElement));
+  if(d.general) refs.general = d.general['@id'] || d.general;
+  if(d.specific) refs.specific = d.specific['@id'] || d.specific;
+  const refKeys = Object.keys(refs);
+  if(refKeys.length){
+    rows.push('<div style="margin-top:8px;font-weight:600">References</div>');
+    refKeys.forEach(k => rows.push(`<div class="meta"><span class="k">${k}:</span> <span class="v">${escapeHtml(String(refs[k]))}</span></div>`));
+  }
+  // show raw JSON snippet for this node (trimmed)
+  try{
+    rows.push('<div style="margin-top:8px;font-weight:600">Raw (trim)</div>');
+    const raw = JSON.stringify(d, null, 2).slice(0, 800) + (JSON.stringify(d, null, 2).length > 800 ? "\n... (trimmed)" : "");
+    rows.push(`<pre>${escapeHtml(raw)}</pre>`);
+  }catch(e){}
+  details.innerHTML = rows.join('');
+}
+
+cy.on('tap', 'node', evt=>{
+  const node = evt.target;
+  renderDetails(node.data());
+});
+
+cy.on('tap', evt=>{
+  if(evt.target === cy) details.innerHTML = '<div class="meta">No node selected.</div>';
+});
+
+/* ============================
+   Legend: derive types + colors
+   ============================ */
+const legendEl = document.getElementById('legend');
+const typeColors = {};
+cy.nodes().forEach(n=>{
+  typeColors[n.data('type')] = cy.style().selector('node').style('background-color')(n);
+});
+Object.keys(typeColors).forEach(t=>{
+  const sw = document.createElement('div');
+  sw.className = 'legend-item';
+  sw.innerHTML = `<span class="sw" style="background:${typeColors[t]}"></span><span style="font-size:13px">${escapeHtml(t)}</span>`;
+  legendEl.appendChild(sw);
+});
+
+/* ============================
+   Controls: layout, export, download
+   ============================ */
+document.getElementById('layoutSelect').addEventListener('change', (e)=>{
+  const name = e.target.value;
+  cy.layout({ name: name, animate: true, fit: true }).run();
+});
+
+document.getElementById('exportPng').addEventListener('click', ()=>{
+  const png = cy.png({ full: true, scale: 2 });
+  const a = document.createElement('a');
+  a.href = png;
+  a.download = 'sysmlv2-kg.png';
+  a.click();
+});
+
+document.getElementById('downloadJson').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(sysmlJson, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sysmlv2.json';
+  a.click();
+});
+
+/* ============================
+   Raw JSON preview (trim)
+   ============================ */
+document.getElementById('rawjson').textContent = JSON.stringify(sysmlJson, null, 2).slice(0, 1500) + (JSON.stringify(sysmlJson, null, 2).length > 1500 ? "\n... (trimmed)" : "");
+
+/* ============================
+   Utility: escape HTML
+   ============================ */
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/* ============================
+   Improve visibility on resize
+   ============================ */
+window.addEventListener('resize', ()=>cy.resize());
+
+  </script>
+</body>
+</html>

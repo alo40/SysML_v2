@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stakeholder Requirements – Steering Wheel Switches</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
+    #app { display: flex; height: 100%; }
+    #cy { flex: 1; }
+    #sidebar {
+      width: 250px;
+      border-left: 1px solid #ddd;
+      padding: 12px;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    h2 { font-size: 16px; margin: 0 0 8px 0; }
+    .attribute { font-size: 13px; margin-bottom: 4px; }
+    .chip { display:inline-flex; gap:6px; align-items:center; padding:3px 6px; border-radius:6px; background:#e5e7eb; font-size:11px; }
+    #legend { display:flex; flex-wrap:wrap; gap:6px; font-size: 12px; }
+    .color-swatch { width:12px; height:12px; border-radius:3px; display:inline-block; }
+  </style>
+  <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div id="cy"></div>
+    <div id="sidebar">
+      <h2>Node Details</h2>
+      <div id="details">Click a node to view its properties.</div>
+      <h3>Legend</h3>
+      <div id="legend"></div>
+    </div>
+  </div>
+
+  <script>
+    const graphData = {
+      nodes: [
+        { id: "OEM", type: "Organization", label: "OEM", color: "#7c3aed" },
+        { id: "Customer", type: "Stakeholder", label: "Customer", color: "#f97316" },
+        { id: "Product", type: "Product", label: "Steering Wheel Switches", color: "#06b6d4" },
+        { id: "SR1", type: "Requirement", label: "SR-1: Volume Up/Down", color: "#10b981", priority: "High", verification: "Test", source: "Customer Spec" },
+        { id: "SR2", type: "Requirement", label: "SR-2: Next/Previous Track", color: "#10b981", priority: "Medium", verification: "Test", source: "Customer Spec" },
+        { id: "SR3", type: "Requirement", label: "SR-3: Voice Command", color: "#10b981", priority: "High", verification: "Demo", source: "Customer Workshop" },
+        { id: "SR4", type: "Requirement", label: "SR-4: Illumination at Night", color: "#10b981", priority: "Medium", verification: "Inspection", source: "Legal Req" },
+        { id: "SR5", type: "Requirement", label: "SR-5: IP54 Water Resistance", color: "#10b981", priority: "High", verification: "Test", source: "Industry Standard" },
+        { id: "Func1", type: "Function", label: "Audio Control", color: "#ef4444" },
+        { id: "Func2", type: "Function", label: "Voice Control", color: "#ef4444" },
+        { id: "Func3", type: "Function", label: "Lighting Control", color: "#ef4444" }
+      ],
+      edges: [
+        { source: "OEM", target: "Customer", label: "supplies_to" },
+        { source: "OEM", target: "Product", label: "develops" },
+        { source: "Customer", target: "Product", label: "requests" },
+        { source: "Product", target: "SR1", label: "satisfies" },
+        { source: "Product", target: "SR2", label: "satisfies" },
+        { source: "Product", target: "SR3", label: "satisfies" },
+        { source: "Product", target: "SR4", label: "satisfies" },
+        { source: "Product", target: "SR5", label: "satisfies" },
+        { source: "SR1", target: "Func1", label: "allocated_to" },
+        { source: "SR2", target: "Func1", label: "allocated_to" },
+        { source: "SR3", target: "Func2", label: "allocated_to" },
+        { source: "SR4", target: "Func3", label: "allocated_to" }
+      ]
+    };
+
+    const elements = [
+      ...graphData.nodes.map(n => ({ data: n })),
+      ...graphData.edges.map((e, i) => ({ data: { id: "e" + i, ...e } }))
+    ];
+
+    const cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: elements,
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': 'data(color)',
+            'label': 'data(label)',
+            'color': '#fff',
+            'text-outline-color': '#222',
+            'text-outline-width': 2,
+            'font-size': 10,
+            'text-valign': 'center',
+            'text-halign': 'center'
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'curve-style': 'bezier',
+            'target-arrow-shape': 'triangle',
+            'line-color': '#999',
+            'target-arrow-color': '#999',
+            'width': 2,
+            'label': 'data(label)',
+            'font-size': 8,
+            'text-rotation': 'autorotate'
+          }
+        }
+      ],
+      layout: { name: 'cose', animate: true }
+    });
+
+    // Sidebar info update
+    const details = document.getElementById('details');
+    cy.on('tap', 'node', evt => {
+      const d = evt.target.data();
+      let html = `<div class="attribute"><strong>${d.label}</strong></div>`;
+      html += `<div class="attribute">Type: ${d.type}</div>`;
+      if (d.type === "Requirement") {
+        html += `<div class="attribute">Priority: <span class="chip">${d.priority}</span></div>`;
+        html += `<div class="attribute">Verification: <span class="chip">${d.verification}</span></div>`;
+        html += `<div class="attribute">Source: <span class="chip">${d.source}</span></div>`;
+      }
+      details.innerHTML = html;
+    });
+
+    cy.on('tap', evt => {
+      if (evt.target === cy) {
+        details.textContent = "Click a node to view its properties.";
+      }
+    });
+
+    // Build legend dynamically
+    const legend = document.getElementById('legend');
+    const uniqueTypes = [...new Set(graphData.nodes.map(n => n.type))];
+    uniqueTypes.forEach(t => {
+      const color = graphData.nodes.find(n => n.type === t).color;
+      const div = document.createElement('div');
+      div.innerHTML = `<span class="color-swatch" style="background:${color}"></span> ${t}`;
+      legend.appendChild(div);
+    });
+  </script>
+</body>
+</html>

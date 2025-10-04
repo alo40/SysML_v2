@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Random Knowledge Graph — Self-contained</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html,body { height:100%; margin:0; font-family: system-ui, -apple-system, Roboto, "Helvetica Neue", Arial; background:#f6f8fa; }
+    #app { display:flex; flex-direction:column; height:100vh; gap:8px; padding:12px; box-sizing:border-box; }
+    header { display:flex; align-items:center; gap:12px; }
+    header h1 { margin:0; font-size:18px; }
+    #controls { display:flex; gap:8px; align-items:center; margin-left:auto; }
+    button, select, input[type="number"] { padding:8px 10px; border-radius:8px; border:1px solid #d0d7de; background:white; cursor:pointer; }
+    button:hover { filter:brightness(.98); }
+    #cy { flex:1; border-radius:10px; border:1px solid #e1e4e8; background:white; box-shadow:0 6px 18px rgba(20,30,40,0.06); }
+    #legend { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; font-size:13px; color:#334155; }
+    .chip { display:inline-flex; gap:8px; align-items:center; padding:6px 8px; border-radius:999px; border:1px solid #e6eef8; background:#ffffff; box-shadow:0 1px 0 rgba(0,0,0,0.02); }
+    .color-swatch { width:12px; height:12px; border-radius:3px; display:inline-block; }
+    #info { padding:8px; font-size:13px; color:#334155; }
+    footer { font-size:12px; color:#64748b; margin-top:6px; }
+  </style>
+
+  <!-- Cytoscape.js CDN -->
+  <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+  <!-- Optional: cose-bilkent layout (for nicer automatic layouts) -->
+  <script src="https://unpkg.com/cytoscape-cose-bilkent@4.1.0/cytoscape-cose-bilkent.js"></script>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Random Knowledge Graph</h1>
+
+      <div id="controls">
+        <label title="Number of nodes">
+          Nodes:
+          <input id="nodeCount" type="number" min="3" max="300" value="15" style="width:70px"/>
+        </label>
+        <label title="Average edges per node">
+          Avg degree:
+          <input id="avgDegree" type="number" min="1" max="10" value="2" style="width:70px"/>
+        </label>
+
+        <select id="layoutSelect" title="Layout algorithm">
+          <option value="cose-bilkent">cose-bilkent (force)</option>
+          <option value="cose">cose</option>
+          <option value="grid">grid</option>
+          <option value="circle">circle</option>
+        </select>
+
+        <button id="regen">Generate</button>
+        <button id="exportPng">Export PNG</button>
+      </div>
+    </header>
+
+    <div id="cy"></div>
+
+    <div id="legend" aria-hidden="true"></div>
+
+    <div id="info">Click a node to see its details here.</div>
+    <footer>Tip: drag nodes, zoom with mouse wheel, double-click a node to center on it.</footer>
+  </div>
+
+  <script>
+    // ----- Utilities -----
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    // Example typed node labels for a "knowledge graph" feel
+    const TYPES = [
+      {type: 'Person', color:'#f97316'},
+      {type: 'Place', color:'#06b6d4'},
+      {type: 'Organization', color:'#7c3aed'},
+      {type: 'Concept', color:'#10b981'},
+      {type: 'Event', color:'#ef4444'}
+    ];
+
+    const SAMPLE_LABELS = {
+      Person: ['Alice','Bob','Carol','Dan','Eve','Frank','Grace','Heidi','Ivan','Judy','Mallory'],
+      Place: ['Berlin','Tokyo','Nile','Everest','Taj Mahal','Amazon Basin'],
+      Organization: ['Acme Corp','Open Labs','University X','NGO Hope','SpaceOrg'],
+      Concept: ['Sustainability','Distributed Systems','Causality','Entropy','Model-Based Design'],
+      Event: ['Conference 2025','Launch Day','Incident 42','Hackathon']
+    };
+
+    const RELATION_LABELS = ['related_to','works_at','born_in','located_at','influences','part_of','attended','founded'];
+
+    // ----- Initialize Cytoscape -----
+    const cy = cytoscape({
+      container: document.getElementById('cy'),
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': 'data(color)',
+            'label': 'data(label)',
+            'text-valign': 'center',
+            'color': '#ffffff',
+            'text-outline-width': 2,
+            'text-outline-color': '#222',
+            'font-size': 11,
+            'width': 'mapData(weight, 1, 10, 24, 60)',
+            'height': 'mapData(weight, 1, 10, 24, 60)',
+            'overlay-padding': '6px',
+            'z-index': 10
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'curve-style': 'bezier',
+            'target-arrow-shape': 'triangle',
+            'width': 2,
+            'line-color': '#b8c2cc',
+            'target-arrow-color': '#b8c2cc',
+            'label': 'data(label)',
+            'font-size': 9,
+            'text-rotation': 'autorotate',
+            'text-margin-x': 0,
+            'text-margin-y': -6
+          }
+        },
+        { selector: ':selected', style: { 'border-width': 3, 'border-color': '#111' } }
+      ],
+      elements: []
+    });
+
+    // center view nicely
+    cy.zoomingEnabled(true);
+    cy.userZoomingEnabled(true);
+    cy.panningEnabled(true);
+
+    // click handler for nodes
+    const info = document.getElementById('info');
+    cy.on('tap', 'node', (evt) => {
+      const n = evt.target.data();
+      info.innerHTML = `<strong>${n.label}</strong> <small>(${n.type})</small><br>` +
+                       `Weight: ${n.weight}<br>` +
+                       `ID: ${n.id}`;
+    });
+
+    cy.on('tap', (evt) => {
+      if (evt.target === cy) info.innerHTML = 'Click a node to see its details here.';
+    });
+
+    // double click to center (dbltap fallback)
+    let lastTap = 0;
+    cy.on('tap', 'node', (evt) => {
+      const now = Date.now();
+      if (now - lastTap < 350) {
+        const node = evt.target;
+        cy.animate({ center: { eles: node }, duration: 300 });
+      }
+      lastTap = now;
+    });
+
+    // ----- Graph generation -----
+    function generateRandomKG(nNodes = 15, avgDegree = 2) {
+      const nodes = [];
+      const edges = [];
+      // create nodes
+      for (let i=0;i<nNodes;i++) {
+        const typeObj = pick(TYPES);
+        const type = typeObj.type;
+        const labelPool = SAMPLE_LABELS[type] || ['X' + i];
+        // some nodes may have repeated labels; for uniqueness add index
+        const label = pick(labelPool) + (Math.random() < 0.15 ? ' ' + (randInt(2000,2025)) : '');
+        const weight = randInt(1,6);
+        nodes.push({
+          data: { id: 'n' + i, label: label, type: type, color: typeObj.color, weight: weight }
+        });
+      }
+
+      // ensure connectivity: create a simple backbone chain
+      for (let i=0;i<nNodes-1;i++) {
+        edges.push({
+          data: { id: 'e_back_' + i, source: 'n' + i, target: 'n' + (i+1), label: pick(RELATION_LABELS) }
+        });
+      }
+
+      // add random extra edges to reach approx avg degree
+      const desiredEdges = Math.round(nNodes * avgDegree / 2); // undirected approximation
+      while (edges.length < desiredEdges) {
+        const a = randInt(0, nNodes-1);
+        const b = randInt(0, nNodes-1);
+        if (a === b) continue;
+        const id = 'e' + a + '_' + b;
+        // prevent duplicate edge (both directions considered same for this demo)
+        if (edges.some(e => (e.data.source === 'n' + a && e.data.target === 'n' + b) || (e.data.source === 'n' + b && e.data.target === 'n' + a))) continue;
+        edges.push({
+          data: { id: id, source: 'n' + a, target: 'n' + b, label: pick(RELATION_LABELS) }
+        });
+      }
+
+      return { nodes, edges };
+    }
+
+    // Apply elements to cy with selected layout
+    function drawGraph(elements, layoutName='cose-bilkent') {
+      cy.json({ elements: elements.nodes.concat(elements.edges) });
+
+      const layoutOpts = {
+        name: layoutName,
+        fit: true,
+        padding: 20,
+        randomize: false,
+        // extra for cose-bilkent
+        animate: true,
+        animationDuration: 300
+      };
+
+      // fallback if layout not available
+      const supportedLayouts = cy.layouts().map(l => l.name);
+      if (!supportedLayouts.includes(layoutName)) layoutOpts.name = 'cose';
+
+      cy.layout(layoutOpts).run();
+
+      // populate legend
+      const legend = document.getElementById('legend');
+      legend.innerHTML = '';
+      TYPES.forEach(t => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerHTML = `<span class="color-swatch" style="background:${t.color}"></span><strong>${t.type}</strong>`;
+        legend.appendChild(chip);
+      });
+    }
+
+    // ----- Wire up UI -----
+    document.getElementById('regen').addEventListener('click', () => {
+      const n = Number(document.getElementById('nodeCount').value) || 15;
+      const deg = Number(document.getElementById('avgDegree').value) || 2;
+      const layout = document.getElementById('layoutSelect').value;
+      const elements = generateRandomKG(n, deg);
+      drawGraph(elements, layout);
+    });
+
+    document.getElementById('layoutSelect').addEventListener('change', () => {
+      const layout = document.getElementById('layoutSelect').value;
+      cy.layout({ name: layout, animate: true, animationDuration: 300 }).run();
+    });
+
+    document.getElementById('exportPng').addEventListener('click', () => {
+      const png = cy.png({ full: true, scale: 1.5 });
+      const link = document.createElement('a');
+      link.href = png;
+      link.download = 'knowledge-graph.png';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
+
+    // initial draw
+    document.getElementById('regen').click();
+
+    // small responsiveness
+    window.addEventListener('resize', () => cy.resize());
+  </script>
+</body>
+</html>
