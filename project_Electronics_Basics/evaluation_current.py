@@ -1,8 +1,12 @@
 # import syside_license
 # syside_license.check()  # Validates your license
 import syside
+import pathlib
 
-model, diagnostics = syside.load_model(["/Users/alejandronietocuatenta/Documents/SysML_v2/project_Electronics_Basics/electronics_basic.sysml"])
+EXAMPLE_DIR = pathlib.Path(__file__).parent
+MODEL_FILE_PATH = EXAMPLE_DIR / "electronics_basic.sysml"
+(model, diagnostics) = syside.load_model([MODEL_FILE_PATH])
+
 
 # print("\ncheck part usage")
 # for part_element in model.nodes(syside.PartUsage):
